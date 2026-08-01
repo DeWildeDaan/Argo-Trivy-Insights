@@ -1,0 +1,39 @@
+name: build
+on:
+    workflow_dispatch:
+    pull_request:
+        branches:
+            - 'main'
+    push:
+        branches:
+            - 'main'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+      - run: npm ci
+      # webpack runs ts-loader with transpileOnly, so types are checked separately.
+      - run: npm run typecheck
+      - run: npm run package
+      - name: Verify extension bundle
+        run: |
+          set -euo pipefail
+          # Argo CD only loads files matching ^extension(.*)\.js$ from /tmp/extensions.
+          test -f dist/resources/extension-trivy-insights.js
+          # argocd-extension-installer copies the archive's resources/ dir into
+          # /tmp/extensions/resources, so it must be the top-level entry.
+          tar -tzf dist/extension-trivy-insights.tar.gz | grep -q '^resources/extension-trivy-insights.js$'
+          # React must stay external - bundling it breaks the Argo CD UI.
+          grep -q 'window.React' dist/resources/extension-trivy-insights.js
+      - name: Upload extension artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: extension-trivy-insights
+          path: dist/extension-trivy-insights.tar.gz
+          if-no-files-found: error

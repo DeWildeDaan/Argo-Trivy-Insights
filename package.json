@@ -6,7 +6,7 @@
   "scripts": {
     "build": "webpack --mode production",
     "dev": "webpack --mode development --watch",
-    "package": "npm run build && tar -C dist -czvf dist/extension-trivy-insights.tar.gz resources",
+    "package": "npm run build && tar -C dist -czf dist/extension-trivy-insights.tar.gz resources",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {

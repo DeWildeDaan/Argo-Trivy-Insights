@@ -1,0 +1,47 @@
+name: release
+on:
+    workflow_dispatch:
+permissions:
+    contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run package
+      - name: Resolve version
+        id: version
+        run: |
+          set -euo pipefail
+          version="v$(node -p "require('./package.json').version")"
+          if gh release view "$version" >/dev/null 2>&1; then
+            echo "Release $version already exists - bump the version in package.json." >&2
+            exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Generate checksums
+        working-directory: dist
+        run: |
+          set -euo pipefail
+          # The filename column must be the bare name: argocd-extension-installer
+          # looks the entry up by exact basename match when verifying.
+          sha256sum extension-trivy-insights.tar.gz > extension-trivy-insights_checksums.txt
+      - name: Upload artifact to GitHub Releases
+        run: |
+          set -euo pipefail
+          gh release create "${{ steps.version.outputs.version }}" \
+            --title "${{ steps.version.outputs.version }}" \
+            --generate-notes \
+            ./dist/extension-trivy-insights.tar.gz \
+            ./dist/extension-trivy-insights_checksums.txt
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

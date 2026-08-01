@@ -59,6 +59,8 @@ initContainers:
     env:
       - name: EXTENSION_URL
         value: https://github.com/<org>/Argo-Trivy-Insights/releases/download/v0.1.0/extension-trivy-insights.tar.gz
+      - name: EXTENSION_CHECKSUM_URL
+        value: https://github.com/<org>/Argo-Trivy-Insights/releases/download/v0.1.0/extension-trivy-insights_checksums.txt
     volumeMounts:
       - name: extensions
         mountPath: /tmp/extensions/
