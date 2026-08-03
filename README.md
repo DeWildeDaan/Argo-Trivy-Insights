@@ -46,9 +46,9 @@ server:
       - name: trivy-insights
         env:
           - name: EXTENSION_URL
-            value: https://github.com/DeWildeDaan/argo-trivy-insights/releases/download/latest/extension-trivy-insights.tar.gz
+            value: https://github.com/DeWildeDaan/argo-trivy-insights/releases/latest/download/extension-trivy-insights.tar.gz
           - name: EXTENSION_CHECKSUM_URL
-            value: https://github.com/DeWildeDaan/argo-trivy-insights/releases/download/latest/extension-trivy-insights_checksums.txt
+            value: https://github.com/DeWildeDaan/argo-trivy-insights/releases/latest/download/extension-trivy-insights_checksums.txt
 ```
 
 ### Development (Local Testing)
