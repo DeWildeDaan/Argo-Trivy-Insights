@@ -21,7 +21,7 @@ module.exports = {
         exclude: /node_modules/,
         use: {
           loader: 'ts-loader',
-          options: { transpileOnly: true },
+          options: { transpileOnly: true, configFile: 'tsconfig.json' },
         },
       },
       {
