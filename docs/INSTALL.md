@@ -20,9 +20,9 @@ server:
       - name: trivy-insights
         env:
           - name: EXTENSION_URL
-            value: https://github.com/DeWildeDaan/argo-trivy-insights/releases/download/latest/extension-trivy-insights.tar.gz
+            value: https://github.com/DeWildeDaan/argo-trivy-insights/releases/latest/download/extension-trivy-insights.tar.gz
           - name: EXTENSION_CHECKSUM_URL
-            value: https://github.com/DeWildeDaan/argo-trivy-insights/releases/download/latest/extension-trivy-insights_checksums.txt
+            value: https://github.com/DeWildeDaan/argo-trivy-insights/releases/latest/download/extension-trivy-insights_checksums.txt
 ```
 
 Or replace `latest` with the release version you want. I would recooment to pass a specific version to pin the extention for stability and security purposes.
