@@ -347,7 +347,7 @@ export const SystemView: React.FC = () => {
     invalidateApiCache();
     lastFetchKeyRef.current = {};
     setAppsRetryTick((tick) => tick + 1);
-    setRetryTick((tick) => tick + 1);
+    setTreesRetryTick((tick) => tick + 1);
   }, []);
 
   const state = activeTab === 'Overview' ? undefined : (byKind as Record<ReportTab, FetchState>)[activeTab];

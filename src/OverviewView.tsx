@@ -230,14 +230,16 @@ export const OverviewView: React.FC<OverviewViewProps> = ({ byKind, visibleKinds
     [byKind]
   );
 
-  // Blocks the dashboard only until each finding kind has produced *some*
-  // data (or finished with none) - once every kind has started streaming in
-  // results, the dashboard renders and its stats keep updating live as more
-  // arrives, rather than waiting for every kind to fully finish.
-  const isLoading = FINDING_KINDS.some((kind) => {
+  // Blocks the dashboard only until at least one finding kind has produced
+  // data. Once the first batch arrives from any kind, the dashboard renders
+  // immediately and stats update live as more data arrives, rather than
+  // waiting for all kinds to produce initial results.
+  const anyKindHasData = FINDING_KINDS.some((kind) => {
     const state = byKind[kind];
-    return state.status === 'idle' || (state.status === 'loading' && state.data.length === 0);
+    return state.status !== 'idle' && state.status !== 'error' && state.data.length > 0;
   });
+  const anyKindLoading = FINDING_KINDS.some((kind) => byKind[kind].status === 'loading' || byKind[kind].status === 'idle');
+  const isLoading = !anyKindHasData && anyKindLoading;
   const isStillStreaming = REPORT_KINDS.some((kind) => byKind[kind].status === 'loading');
 
   const findingRowsByKind: Partial<Record<ReportKind, Array<{ severity: string }>>> = {
