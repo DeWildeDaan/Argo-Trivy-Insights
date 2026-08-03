@@ -1,0 +1,293 @@
+.ov-streaming-note {
+  margin: 0 0 1em 0;
+  font-size: 12.5px;
+}
+
+.ov-leaderboard {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75em;
+}
+
+.ov-leaderboard-row {
+  display: grid;
+  grid-template-columns: 180px 1fr 48px;
+  align-items: center;
+  gap: 1em;
+}
+
+.ov-leaderboard-label {
+  position: relative;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--tv-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ov-leaderboard-bar {
+  min-width: 0;
+}
+
+.ov-leaderboard-count {
+  text-align: right;
+  font-weight: 700;
+  color: var(--tv-text);
+}
+
+.ov-leaderboard-more {
+  margin: 0.25em 0 0 0;
+}
+
+.ov-kind-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1.25em;
+}
+
+.ov-kind-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6em;
+  text-align: center;
+}
+
+.ov-kind-tile-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--tv-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.ov-stat-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.25em;
+  margin-bottom: 1.75em;
+}
+
+.ov-stat-tile {
+  margin-bottom: 0;
+}
+
+.ov-progress-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--tv-text);
+  margin-bottom: 0.4em;
+}
+
+.ov-progress {
+  width: 100%;
+  height: 10px;
+  border-radius: 5px;
+  background: var(--tv-border-soft);
+  overflow: hidden;
+  margin-bottom: 0.6em;
+}
+
+.ov-progress-fill {
+  height: 100%;
+  background: var(--tv-accent);
+  border-radius: 5px;
+}
+
+.ov-ranked-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65em;
+}
+
+.ov-ranked-row {
+  display: grid;
+  grid-template-columns: 110px 1fr 32px;
+  align-items: center;
+  gap: 0.75em;
+}
+
+.ov-ranked-label {
+  position: relative;
+  font-size: 12px;
+  color: var(--tv-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ov-label-tooltip {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 0;
+  background: #2b3a42;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 0.3em 0.6em;
+  border-radius: 4px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.1s ease-in-out;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.ov-ranked-label:hover .ov-label-tooltip,
+.ov-ranked-label:focus .ov-label-tooltip,
+.ov-leaderboard-label:hover .ov-label-tooltip,
+.ov-leaderboard-label:focus .ov-label-tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+.ov-ranked-track {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--tv-border-soft);
+  overflow: hidden;
+}
+
+.ov-ranked-bar {
+  display: block;
+  height: 100%;
+  border-radius: 4px;
+}
+
+.ov-ranked-count {
+  text-align: right;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--tv-text);
+}
+
+.ov-sbom-panel {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2.5em;
+}
+
+.ov-sbom-stats {
+  display: flex;
+  gap: 2em;
+}
+
+.ov-two-col {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.25em;
+  align-items: start;
+}
+
+.ov-stacked-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.ov-license-row {
+  display: flex;
+  align-items: center;
+  gap: 2em;
+}
+
+.ov-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6em;
+}
+
+.ov-legend--row {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1.25em;
+  margin-bottom: 1em;
+}
+
+.ov-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  font-size: 12px;
+  color: var(--tv-text);
+}
+
+.ov-legend-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.rd-cards--overview {
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+}
+
+.rd-card-icon--total { background: rgba(0, 162, 179, 0.12); color: #00a2b3; }
+
+.ov-donut {
+  border-radius: 50%;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.ov-donut-hole {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--tv-surface);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.ov-donut-arc {
+  cursor: default;
+  transition: opacity 0.1s ease-in-out;
+}
+
+.ov-donut-arc:hover,
+.ov-donut-arc:focus {
+  opacity: 0.8;
+  outline: none;
+}
+
+.ov-donut-tooltip {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  background: #2b3a42;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 0.3em 0.6em;
+  border-radius: 4px;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.ov-donut-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--tv-text);
+}
+
+.ov-donut-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--tv-muted);
+}
+
+.ov-positive {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  margin: 0;
+  color: #18be94;
+  font-size: 13px;
+  font-weight: 600;
+}

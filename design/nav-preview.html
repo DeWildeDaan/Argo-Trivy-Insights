@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Nav preview</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+<link rel="stylesheet" href="../src/AppView.css" />
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 1.5em; background: #fff; }
+  body.theme-dark { background: #100f0f; }
+  .toolbar { margin-bottom: 1.5em; }
+</style>
+</head>
+<body>
+  <div class="toolbar">
+    <button type="button" id="theme-toggle">Toggle dark mode</button>
+  </div>
+  <div class="tv-app">
+    <div class="tv-nav">
+      <button type="button" class="tv-nav-item tv-nav-item--active"><i class="fa fa-chart-pie tv-nav-icon"></i>Overview</button>
+      <button type="button" class="tv-nav-item"><i class="fa fa-bug tv-nav-icon"></i>Vulnerabilities</button>
+      <button type="button" class="tv-nav-item"><i class="fa fa-key tv-nav-icon"></i>Exposed Secrets</button>
+      <button type="button" class="tv-nav-item"><i class="fa fa-clipboard-check tv-nav-icon"></i>Config Audit</button>
+      <div class="tv-nav-divider"></div>
+      <div class="tv-nav-indicator" style="left: 0px; width: 90px;"></div>
+    </div>
+    <p>Content below the nav...</p>
+  </div>
+
+  <script>
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+      document.body.classList.toggle('theme-dark');
+    });
+  </script>
+</body>
+</html>

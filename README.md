@@ -1,84 +1,76 @@
-# Argo-Trivy-Insights
+# Argo Trivy Insights
 
-An Argo CD [App View UI extension](https://argo-cd.readthedocs.io/en/stable/developer-guide/extensions/ui-extensions/#app-view-extensions)
-that adds a **Trivy Insights** view to the Application Details page, next to the
-Tree / Pods / Network views.
+[![Build Status](https://github.com/DeWildeDaan/argo-trivy-insights/actions/workflows/build.yaml/badge.svg)](https://github.com/DeWildeDaan/argo-trivy-insights/actions)
+[![GitHub Release](https://img.shields.io/github/v/release/DeWildeDaan/argo-trivy-insights?logo=github)](https://github.com/DeWildeDaan/argo-trivy-insights/releases)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-Currently a placeholder — the view renders an empty page.
+Unified security insights for Argo CD applications. View [Trivy Operator](https://aquasecurity.github.io/trivy-operator/) scan results directly in Argo CD—vulnerabilities, exposed secrets, configuration audits, RBAC assessments, and SBOMs—all in one place.
 
-## Layout
+## Features
 
-```
-src/
-  index.tsx    # registers the extension with window.extensionsAPI
-  AppView.tsx  # the view component (empty page for now)
-  types.ts     # local typings for the Argo CD extensions API
-webpack.config.js
-```
+- **Per-Application View**: "Trivy Insights" tab on Argo CD Application details
+- **Cluster-Wide Dashboard**: Aggregate security data across all applications from the sidebar
+- **Scan Reports**: Overview, Vulnerabilities, Exposed Secrets, Configuration Audit, RBAC Assessment, SBOM
+- **Fast Filtering**: Filter by namespace and resource on the cluster-wide view
+- **Zero Bundled Dependencies**: Uses Argo CD's built-in React, keeping the extension lightweight
+- **Deeplinks & Exports**: Easely share your findings by exporting them in or sharing a link.SBOM is exported in CycloneDX standard JSON file, all other findings are exported in CSV format.
 
-React is **not** bundled — Argo CD provides it as the `React` global, so it is
-declared as a webpack `external`.
+## Screenshots
 
-## Build
+### Per-Application View
+*Screenshot: Trivy Insights tab in Application Details showing vulnerabilities*
 
-```bash
-npm install
-npm run build      # -> dist/resources/extension-trivy-insights.js
-npm run dev        # watch mode
-npm run typecheck
-npm run package    # -> dist/extension-trivy-insights.tar.gz
-```
+### Cluster-Wide Dashboard
+*Screenshot: /trivy-insights system page with namespace/app filters and overview stats*
 
-The output filename must match `^extension(.*)\.js$`, otherwise Argo CD will
-not load it.
+### Reports
+*Screenshot: Vulnerability, Secrets, SBOM, and Config Audit tabs*
 
-## Install into Argo CD
+## Installation
 
-Argo CD loads every matching `.js` file it finds under `/tmp/extensions` in the
-`argocd-server` pods.
+Look at the [installation guide](/docs/INSTALL.md) for a more detailed explanation.
 
-### Quick local test
+### Prerequisites
+- Argo CD 2.6+ (for UI extensions support)
+- [Trivy Operator](https://aquasecurity.github.io/trivy-operator/) installed and scanning your cluster
 
-```bash
-kubectl cp dist/resources/extension-trivy-insights.js \
-  argocd/<argocd-server-pod>:/tmp/extensions/trivy-insights/extension-trivy-insights.js
-```
+### Helm (Production)
 
-Then hard-reload the Argo CD UI (extensions are loaded on initial page render).
-
-### Proper install
-
-Publish `dist/extension-trivy-insights.tar.gz` (e.g. as a GitHub release asset)
-and use the [argocd-extension-installer](https://github.com/argoproj-labs/argocd-extension-installer)
-init container on the `argocd-server` deployment:
+Add to your Argo CD Helm values:
 
 ```yaml
-initContainers:
-  - name: trivy-insights-extension
-    image: quay.io/argoprojlabs/argocd-extension-installer:v0.0.8
-    env:
-      - name: EXTENSION_URL
-        value: https://github.com/<org>/Argo-Trivy-Insights/releases/download/v0.1.0/extension-trivy-insights.tar.gz
-      - name: EXTENSION_CHECKSUM_URL
-        value: https://github.com/<org>/Argo-Trivy-Insights/releases/download/v0.1.0/extension-trivy-insights_checksums.txt
-    volumeMounts:
-      - name: extensions
-        mountPath: /tmp/extensions/
-    securityContext:
-      runAsUser: 1000
-      allowPrivilegeEscalation: false
+server:
+  extensions:
+    enabled: true
+    extensionList:
+      - name: trivy-insights
+        env:
+          - name: EXTENSION_URL
+            value: https://github.com/DeWildeDaan/argo-trivy-insights/releases/download/latest/extension-trivy-insights.tar.gz
+          - name: EXTENSION_CHECKSUM_URL
+            value: https://github.com/DeWildeDaan/argo-trivy-insights/releases/download/latest/extension-trivy-insights_checksums.txt
 ```
 
-with a shared `extensions` `emptyDir` volume mounted at `/tmp/extensions/` in
-the `argocd-server` container.
+### Development (Local Testing)
 
-## Registration
-
-```ts
-window.extensionsAPI.registerAppViewExtension(
-  AppView,            // component
-  'Trivy Insights',   // title
-  'fa-shield-alt'     // FontAwesome icon class for the tab
-  // optional 4th arg: (app) => boolean — gate which apps show the view
-);
+```bash
+npm run install:dev
+# Hard-reload Argo CD UI (Ctrl+Shift+R)
 ```
+
+⚠️ Extension is stored in pod `/tmp`, lost on restart. For persistence, use Helm above.
+
+## How It Works
+
+The extension provides two integrated views:
+
+1. **AppView Extension** — "Trivy Insights" tab in Application Details
+   - Shows security reports for that application only
+   - Reports fetched from the application's namespace
+
+2. **SystemLevel Extension** — "/trivy-insights" sidebar page
+   - Aggregates scan results across all applications
+   - Includes namespace and application filters
+   - Fetches all applications, resolves each one's reports
+
+Both views share report components (Overview, Vulnerabilities, Secrets, Audit, SBOM, RBAC) for a consistent experience.

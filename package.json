@@ -2,11 +2,12 @@
   "name": "argo-trivy-insights",
   "version": "0.1.0",
   "private": true,
-  "description": "Argo CD App View UI extension showing Trivy insights for an application",
+  "description": "Argo CD UI extension showing Trivy insights",
   "scripts": {
     "build": "webpack --mode production",
     "dev": "webpack --mode development --watch",
     "package": "npm run build && tar -C dist -czf dist/extension-trivy-insights.tar.gz resources",
+    "install:dev": "npm run build && ./scripts/dev-install.sh",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {

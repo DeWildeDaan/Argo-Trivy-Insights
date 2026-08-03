@@ -1,0 +1,24 @@
+.sbom-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1em;
+  margin-bottom: 1.5em;
+}
+
+.sbom-card-icon--total { background: rgba(13, 173, 234, 0.12); color: #0dadea; }
+.sbom-card-icon--types { background: rgba(142, 68, 173, 0.12); color: #8e44ad; }
+.sbom-card-icon--licenses { background: rgba(22, 160, 133, 0.12); color: #16a085; }
+.sbom-card-icon--resources { background: rgba(52, 73, 94, 0.12); color: #34495e; }
+
+.sbom-license-pill {
+  margin-right: 0.35em;
+  margin-bottom: 0.2em;
+  display: inline-block;
+}
+
+.sbom-purl {
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: 11px;
+  color: var(--tv-muted);
+  word-break: break-all;
+}

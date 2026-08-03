@@ -18,7 +18,6 @@ jobs:
           node-version: '20.x'
           cache: 'npm'
       - run: npm ci
-      # webpack runs ts-loader with transpileOnly, so types are checked separately.
       - run: npm run typecheck
       - run: npm run package
       - name: Verify extension bundle

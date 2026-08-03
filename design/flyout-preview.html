@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Flyout preview</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+<link rel="stylesheet" href="../src/AppView.css" />
+<link rel="stylesheet" href="../src/ReportDashboard.css" />
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; background: #eef2f5; }
+  body.theme-dark { background: #100f0f; }
+  .toolbar { padding: 1em; display: flex; gap: 0.75em; align-items: center; }
+  .toolbar select, .toolbar button { padding: 0.5em 0.8em; border-radius: 5px; border: 1px solid #dee6eb; }
+</style>
+</head>
+<body>
+  <div class="tv-app">
+    <div class="toolbar">
+      <label for="severity">Severity:</label>
+      <select id="severity">
+        <option value="critical" selected>CRITICAL</option>
+        <option value="high">HIGH</option>
+        <option value="medium">MEDIUM</option>
+        <option value="low">LOW</option>
+        <option value="unknown">UNKNOWN</option>
+      </select>
+      <button type="button" id="theme-toggle">Toggle dark mode</button>
+    </div>
+
+    <div class="rd-flyout-overlay rd-flyout-overlay--open"></div>
+    <div id="flyout" class="rd-flyout rd-flyout--open rd-flyout--critical">
+      <button class="rd-flyout-close" aria-label="Close"><i class="fa fa-times"></i></button>
+      <div class="rd-flyout-header">
+        <div class="rd-flyout-eyebrow">KSV110</div>
+        <h4>Container should not be running in privileged mode</h4>
+        <div class="rd-flyout-meta">
+          <span id="badge" class="rd-badge rd-badge--critical">CRITICAL</span>
+          <span class="rd-pill"><i class="fas fa-tag"></i>Kubernetes Security Check</span>
+          <span class="rd-pill"><i class="fas fa-cube"></i>Deployment/payments-api</span>
+        </div>
+      </div>
+      <div class="rd-flyout-body">
+        <div class="rd-flyout-section">
+          <h6><i class="fas fa-align-left"></i>Description</h6>
+          <p>A privileged container has all root capabilities of a host machine and can also grant access to devices. This allows the container to gain almost all the same access as processes running directly on the host.</p>
+        </div>
+        <div class="rd-flyout-section rd-flyout-section--messages">
+          <h6><i class="fas fa-terminal"></i>Messages</h6>
+          <ul>
+            <li>Container 'payments-api' of Deployment 'payments-api' should set 'securityContext.privileged' to false</li>
+            <li>Default value for 'securityContext.privileged' is false</li>
+          </ul>
+        </div>
+        <div class="rd-flyout-section rd-flyout-section--remediation">
+          <h6><i class="fas fa-wrench"></i>Remediation</h6>
+          <p>Set 'containers[].securityContext.privileged' to false in the pod spec, or omit the field entirely so it defaults to false.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const select = document.getElementById('severity');
+    const flyout = document.getElementById('flyout');
+    const badge = document.getElementById('badge');
+    select.addEventListener('change', () => {
+      const sev = select.value;
+      flyout.className = `rd-flyout rd-flyout--open rd-flyout--${sev}`;
+      badge.className = `rd-badge rd-badge--${sev}`;
+      badge.textContent = sev.toUpperCase();
+    });
+
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+      document.body.classList.toggle('theme-dark');
+    });
+  </script>
+</body>
+</html>

@@ -16,6 +16,8 @@ jobs:
       - run: npm ci
       - run: npm run typecheck
       - run: npm run package
+      - name: Verify dist output
+        run: test -f dist/extension-trivy-insights.tar.gz
       - name: Resolve version
         id: version
         run: |
