@@ -24,7 +24,7 @@ Unified security insights for Argo CD applications. View [Trivy Operator](https:
 ### Vulnerabilities (Cluster-Wide View)
 ![Vulnerabilities Cluster](docs/screenshots/light-theme/vulnerabilities-cluster-light.png)
 
-See the full [screenshot gallery](docs/GALLERY.md) for all tabs, themes, and views.
+See the full [screenshot gallery](/docs/GALLERY.md) for all tabs, themes, and views.
 
 ## Installation
 
