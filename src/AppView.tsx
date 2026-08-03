@@ -24,6 +24,7 @@ import {
   TABS,
 } from './reportKinds';
 import { REPORT_KIND_LABEL } from './trivyReport';
+import { deduplicateReports } from './reportDeduplication';
 import { SbomReportView } from './SbomReportView';
 import { TabBar } from './TabBar';
 import { AppViewProps, ResourceNode } from './types';
@@ -197,11 +198,13 @@ export const AppView: React.FC<AppViewProps> = ({ application, tree }) => {
         setByKind((prev) => {
           const prevState = prev[kind];
           const prevData = prevState.status === 'loading' ? prevState.data : [];
+          const allData = [...prevData, ...items];
+          const dedupData = deduplicateReports(allData);
           return {
             ...prev,
             [kind]: {
               status: 'loading',
-              data: [...prevData, ...items],
+              data: dedupData,
               settled: settledCounts[kind] ?? 0,
               total: targetsByKind[kind]!.length,
             },
@@ -229,6 +232,8 @@ export const AppView: React.FC<AppViewProps> = ({ application, tree }) => {
           setByKind((prev) => {
             const prevState = prev[kind];
             const prevData = prevState.status === 'loading' ? prevState.data : [];
+            const allData = [...prevData, ...remaining];
+            const dedupData = deduplicateReports(allData);
             const failed = failedCounts[kind] ?? 0;
             if (total > 0 && failed === total) {
               return {
@@ -238,7 +243,7 @@ export const AppView: React.FC<AppViewProps> = ({ application, tree }) => {
             }
             return {
               ...prev,
-              [kind]: { status: 'loaded', data: [...prevData, ...remaining], failedCount: failed },
+              [kind]: { status: 'loaded', data: dedupData, failedCount: failed },
             };
           });
         }
