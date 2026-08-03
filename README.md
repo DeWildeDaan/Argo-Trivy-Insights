@@ -17,14 +17,14 @@ Unified security insights for Argo CD applications. View [Trivy Operator](https:
 
 ## Screenshots
 
-### Per-Application View
-*Screenshot: Trivy Insights tab in Application Details showing vulnerabilities*
+### Overview Tab
+![Overview App](docs/screenshots/light-theme/overview-app-light-1.png)
+![Overview App](docs/screenshots/light-theme/overview-app-light-2.png)
 
-### Cluster-Wide Dashboard
-*Screenshot: /trivy-insights system page with namespace/app filters and overview stats*
+### Vulnerabilities (Cluster-Wide View)
+![Vulnerabilities Cluster](docs/screenshots/light-theme/vulnerabilities-cluster-light.png)
 
-### Reports
-*Screenshot: Vulnerability, Secrets, SBOM, and Config Audit tabs*
+See the full [screenshot gallery](docs/GALLERY.md) for all tabs, themes, and views.
 
 ## Installation
 
@@ -74,3 +74,10 @@ The extension provides two integrated views:
    - Fetches all applications, resolves each one's reports
 
 Both views share report components (Overview, Vulnerabilities, Secrets, Audit, SBOM, RBAC) for a consistent experience.
+
+### How to Access
+
+| View | Where to Find It | Screenshot |
+|------|------------------|-----------|
+| **Application View** | Navigate to any Application → "Trivy Insights" icon | ![App Navigation](docs/screenshots/navigation/navigation-app.png) |
+| **Cluster View** | Sidebar → "Trivy Insights" | ![Cluster Navigation](docs/screenshots/navigation/navigation-cluster.png) |
