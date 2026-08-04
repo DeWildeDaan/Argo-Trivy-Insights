@@ -81,3 +81,11 @@ Both views share report components (Overview, Vulnerabilities, Secrets, Audit, S
 |------|------------------|-----------|
 | **Application View** | Navigate to any Application → "Trivy Insights" icon | ![App Navigation](docs/screenshots/navigation/navigation-app.png) |
 | **Cluster View** | Sidebar → "Trivy Insights" | ![Cluster Navigation](docs/screenshots/navigation/navigation-cluster.png) |
+
+
+
+
+
+---
+
+> 🤖 Built with AI assistance used thoughtfully.

@@ -25,7 +25,52 @@ server:
             value: https://github.com/DeWildeDaan/argo-trivy-insights/releases/latest/download/extension-trivy-insights_checksums.txt
 ```
 
-Or replace `latest` with the release version you want. I would recooment to pass a specific version to pin the extention for stability and security purposes.
+Or replace `latest` with the release version you want. I would recommend to pass a specific version to pin the extention for stability and security purposes.
+
+## Init container
+
+If you deploy and manage ArgoCD via the official Helm chart and ArgoCD manages itself i would recommend the approach above since the helm chart wil do the steps we are doing here for you.
+If you deployed ArgoCD once with the helm chart and ArgoCD does **not** manage itself, you can take this approach.
+
+### 1. Create a patch yaml file
+
+```yaml
+spec:
+  template:
+    spec:
+      initContainers:
+        - name: extension-trivy-insights
+          image: quay.io/argoprojlabs/argocd-extension-installer:v0.0.1
+          env:
+            - name: EXTENSION_URL
+              value: https://github.com/DeWildeDaan/argo-trivy-insights/releases/latest/download/extension-trivy-insights.tar.gz
+            - name: EXTENSION_CHECKSUM_URL
+              value: https://github.com/DeWildeDaan/argo-trivy-insights/releases/latest/download/extension-trivy-insights_checksums.txt
+          volumeMounts:
+            - name: extensions
+              mountPath: /tmp/extensions/
+          securityContext:
+            runAsUser: 1000
+            allowPrivilegeEscalation: false
+      containers:
+        - name: argocd-server
+          volumeMounts:
+            - name: extensions
+              mountPath: /tmp/extensions/
+      volumes:
+        - name: extensions
+          emptyDir: {}
+```
+
+Or replace `latest` with the release version you want. I would recommend to pass a specific version to pin the extention for stability and security purposes.
+
+### 2. Apply the changes to your ArgoCD server dpeloyment
+
+```bash
+kubectl patch deployment {argocd-server-pod} -n {argocd-server-namespace} \
+  --type merge \
+  --patch-file argocd-extensions-patch.yaml
+```
 
 ## Development (Local Testing)
 
@@ -61,11 +106,3 @@ npm run install:dev  # Copy to pod
 ```
 
 ⚠️ **Important:** The extension is written to the pod's `/tmp`, so it's lost on pod restart. For persistent testing, use Helm instead.
-
-## Troubleshooting
-
-| Issue | Solution |
-|-------|----------|
-| Extension doesn't appear in UI | Hard-reload browser (Ctrl+Shift+R), check browser console (F12) for errors |
-| Old version still showing | Clear browser cache (Ctrl+Shift+Delete), pod may need to restart if using Helm |
-| `/extensions.js` doesn't contain extension | Check pod logs: `kubectl -n argocd logs -f deploy/argocd-server` |

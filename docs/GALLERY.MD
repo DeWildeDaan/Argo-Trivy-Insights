@@ -37,6 +37,8 @@ Here you can find images of all available navigation tabs/screen this extention 
 | ![Audit App Light](screenshots/light-theme/audit-app-light.png) | ![Audit App Dark](screenshots/dark-theme/audit-app-dark.png) |
 | **Cluster-Wide View** | **Cluster-Wide View** |
 | ![Audit Cluster Light](screenshots/light-theme/audit-cluster-light.png) | ![Audit Cluster Dark](screenshots/dark-theme/audit-cluster-dark.png) |
+| **Fly-out View** | **Fly-out View** |
+| ![Audit Cluster Light](screenshots/light-theme/audit-flyout-light.png) | ![Audit Cluster Dark](screenshots/dark-theme/audit-flyout-dark.png) |
 
 ### RBAC Assessment Tab
 
@@ -46,6 +48,8 @@ Here you can find images of all available navigation tabs/screen this extention 
 | ![RBAC App Light](screenshots/light-theme/rbac-app-light.png) | ![RBAC App Dark](screenshots/dark-theme/rbac-app-dark.png) |
 | **Cluster-Wide View** | **Cluster-Wide View** |
 | ![RBAC Cluster Light](screenshots/light-theme/rbac-cluster-light.png) | ![RBAC Cluster Dark](screenshots/dark-theme/rbac-cluster-dark.png) |
+| **Fly-out View** | **Fly-out View** |
+| ![Audit Cluster Light](screenshots/light-theme/audit-flyout-light.png) | ![Audit Cluster Dark](screenshots/dark-theme/audit-flyout-dark.png) |
 
 ### SBOM Tab
 
