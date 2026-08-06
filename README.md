@@ -60,6 +60,16 @@ npm run install:dev
 
 ⚠️ Extension is stored in pod `/tmp`, lost on restart. For persistence, use Helm above.
 
+### Compatibility
+This extention is currently tested with the following ArgoCD versions:
+| ArgoCD Helm chart version | ArgoCD version |
+|---|---|
+| argo-cd-10.2.2 | v3.4.6 |
+| argo-cd-10.1.3 | v3.4.5 |
+| argo-cd-9.5.22 | v3.4.4 |
+| argo-cd-9.5.16 | v3.4.3 |
+| argo-cd-9.5.14 | v3.4.2 |
+
 ## How It Works
 
 The extension provides two integrated views:
