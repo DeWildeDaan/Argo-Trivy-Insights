@@ -134,3 +134,22 @@ by exact basename match when `EXTENSION_CHECKSUM_URL` is set.
 Release notes are generated with `gh release create --generate-notes`. To use a
 hand-written changelog instead, add a `CHANGELOG.md` and swap that flag for
 `-F CHANGELOG.md`.
+
+## Known Issues
+
+### 1. Argo CD 3.5+: system-level extension silently missing from sidebar
+#### Issue
+On Argo CD 3.5.0+, `registerSystemLevelExtension` can be a no-op with **zero
+console errors**, no sidebar item, no route, nothing. You can follow progress in the created [ArgoCD GitHub issue](https://github.com/argoproj/argo-cd/issues/29095)
+#### Sustpected root cause 
+3.5.0 switched the UI shell's mount from `ReactDOM.render()` (synchronous, React 16)
+to `ReactDOM.createRoot().render()` (React 18/19). If your extension's
+`<script defer>` runs before Argo CD's `App` component has finished mounting
+and subscribed its internal `'systemLevel'` event listener, the registration
+event fires into a void and is dropped, nothing replays it later.
+`registerAppViewExtension` is unaffected because it's read from a plain array
+on demand rather than delivered via a one-shot event.
+#### Workaround 
+Applied in `src/index.tsx`: `registerSystemLevelExtension` is
+called via `setTimeout(..., 0)` so it runs on the next macrotask, after the
+shell's initial mount has had a chance to complete. Tracked upstream at

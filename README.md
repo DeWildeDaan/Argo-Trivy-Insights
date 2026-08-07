@@ -58,17 +58,21 @@ npm run install:dev
 # Hard-reload Argo CD UI (Ctrl+Shift+R)
 ```
 
-⚠️ Extension is stored in pod `/tmp`, lost on restart. For persistence, use Helm above.
+:warning: Extension is stored in pod `/tmp`, lost on restart. For persistence, use Helm above.
 
 ### Compatibility
 This extention is currently tested with the following ArgoCD versions:
-| ArgoCD Helm chart version | ArgoCD version |
-|---|---|
-| argo-cd-10.2.2 | v3.4.6 |
-| argo-cd-10.1.3 | v3.4.5 |
-| argo-cd-9.5.22 | v3.4.4 |
-| argo-cd-9.5.16 | v3.4.3 |
-| argo-cd-9.5.14 | v3.4.2 |
+| ArgoCD Helm chart version | ArgoCD version | Trivy Insights version |
+|---|---|---|
+| argo-cd-10.3.0 | v3.5.0 | :warning: v1.1.0 |
+| argo-cd-10.2.2 | v3.4.6 | v1.0.1 |
+| argo-cd-10.1.3 | v3.4.5 | v1.0.1 |
+| argo-cd-9.5.22 | v3.4.4 | v1.0.1 |
+| argo-cd-9.5.16 | v3.4.3 | v1.0.1 |
+| argo-cd-9.5.14 | v3.4.2 | v1.0.1 |
+
+> [!NOTE]  
+> :warning: sign indicates breaking change/update needed for the extention to work on that ArgoCD version.
 
 ## How It Works
 

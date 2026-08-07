@@ -29,7 +29,7 @@ if [ "${#pods[@]}" -eq 0 ]; then
 fi
 
 for pod in "${pods[@]}"; do
-  kubectl -n "$NS" exec -i "$pod" -c argocd-server -- \
+  kubectl -n "$NS" exec -i "$pod" -c server -- \
     sh -c "mkdir -p $DEST_DIR && cat > $DEST_DIR/extension-trivy-insights.js" < "$BUNDLE"
   echo "==> installed into $pod:$DEST_DIR"
 done
