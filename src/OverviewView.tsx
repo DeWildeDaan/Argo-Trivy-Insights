@@ -1,9 +1,11 @@
 import * as React from 'react';
 
 import './OverviewView.css';
+import './ClusterComplianceReportView.css';
 import { REPORT_KINDS } from './reportKinds';
 import type { FetchState, ReportKind } from './reportKinds';
 import { flattenChecksReports } from './checksReport';
+import { flattenClusterComplianceReports } from './clusterComplianceReport';
 import { flattenExposedSecretReports } from './exposedSecretReport';
 import { ReportCleanState, SeverityLegend } from './ReportDashboard';
 import { flattenSbomReports } from './sbomReport';
@@ -87,13 +89,13 @@ const PositiveNote: React.FC<{ message: string }> = ({ message }) => (
   </p>
 );
 
-interface DonutSegment {
+export interface DonutSegment {
   key: string;
   count: number;
   color: string;
 }
 
-const DonutChart: React.FC<{
+export const DonutChart: React.FC<{
   segments: DonutSegment[];
   size?: number;
   thickness?: number;
@@ -232,6 +234,7 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
       config: flattenChecksReports(dataFor(byKind.ConfigAuditReport)),
       rbac: flattenChecksReports(dataFor(byKind.RbacAssessmentReport)),
       sbom: flattenSbomReports(dataFor(byKind.SbomReport)),
+      compliance: flattenClusterComplianceReports(dataFor(byKind.ClusterComplianceReport)),
     }),
     [byKind]
   );
@@ -320,7 +323,23 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
     [rows.sbom]
   );
 
-  const totalRows = rows.vuln.length + rows.secret.length + rows.config.length + rows.rbac.length + rows.sbom.length;
+  const complianceStats = React.useMemo(() => {
+    let pass = 0;
+    let fail = 0;
+    let manual = 0;
+    for (const instance of rows.compliance) {
+      for (const control of instance.controls) {
+        if (control.status === 'pass') pass += 1;
+        else if (control.status === 'fail') fail += 1;
+        else manual += 1;
+      }
+    }
+    const passRate = pass + fail > 0 ? Math.round((pass / (pass + fail)) * 100) : 0;
+    return { frameworks: rows.compliance.length, pass, fail, manual, passRate };
+  }, [rows.compliance]);
+
+  const totalRows =
+    rows.vuln.length + rows.secret.length + rows.config.length + rows.rbac.length + rows.sbom.length + rows.compliance.length;
 
   if (isLoading) {
     return (
@@ -411,6 +430,59 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
                 </div>
               );
             })}
+          </div>
+        </div>
+      )}
+
+      {visibleKinds.ClusterComplianceReport && rows.compliance.length > 0 && (
+        <div className="rd-panel">
+          <h5>Compliance</h5>
+          <div className="rd-cards ccr-stat-cards">
+            <div className="rd-card">
+              <span className="rd-card-icon ccr-card-icon--pass">
+                <i className="fas fa-percentage" />
+              </span>
+              <div>
+                <div className="rd-card-label">Pass Rate</div>
+                <div className="rd-card-count">{complianceStats.passRate}%</div>
+              </div>
+            </div>
+            <div className="rd-card">
+              <span className="rd-card-icon rd-card-icon--total">
+                <i className="fas fa-balance-scale" />
+              </span>
+              <div>
+                <div className="rd-card-label">Frameworks</div>
+                <div className="rd-card-count">{complianceStats.frameworks}</div>
+              </div>
+            </div>
+            <div className="rd-card">
+              <span className="rd-card-icon ccr-card-icon--pass">
+                <i className="fas fa-check-circle" />
+              </span>
+              <div>
+                <div className="rd-card-label">Passed</div>
+                <div className="rd-card-count">{complianceStats.pass}</div>
+              </div>
+            </div>
+            <div className="rd-card">
+              <span className="rd-card-icon ccr-card-icon--fail">
+                <i className="fas fa-times-circle" />
+              </span>
+              <div>
+                <div className="rd-card-label">Failed</div>
+                <div className="rd-card-count">{complianceStats.fail}</div>
+              </div>
+            </div>
+            <div className="rd-card">
+              <span className="rd-card-icon ccr-card-icon--manual">
+                <i className="fas fa-hand-paper" />
+              </span>
+              <div>
+                <div className="rd-card-label">Manual</div>
+                <div className="rd-card-count">{complianceStats.manual}</div>
+              </div>
+            </div>
           </div>
         </div>
       )}

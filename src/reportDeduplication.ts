@@ -9,6 +9,15 @@ function reportResourceKey(report: any): string {
   const containerName = labels['trivy-operator.container.name'];
   const namespace = report?.metadata?.namespace;
 
+  // Cluster-wide reports (e.g. ClusterComplianceReport) aren't scans of a
+  // specific workload, so they carry none of the trivy-operator.resource.*
+  // labels above - every instance would otherwise collapse to the same
+  // empty key. Their metadata.name is a stable per-instance identifier
+  // (e.g. k8s-cis-1.23 vs k8s-nsa-1.0), so key on that plus kind instead.
+  if (!resourceName && !resourceKind && !containerName) {
+    return `${report?.kind ?? ''}/${namespace ?? ''}/${report?.metadata?.name ?? ''}`;
+  }
+
   // Composite key: namespace/kind/name/container
   // Empty fields are preserved to maintain uniqueness
   return `${namespace ?? ''}/${resourceKind ?? ''}/${resourceName ?? ''}/${containerName ?? ''}`;

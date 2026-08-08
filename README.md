@@ -10,7 +10,7 @@ Unified security insights for Argo CD applications. View [Trivy Operator](https:
 
 - **Per-Application View**: "Trivy Insights" tab on Argo CD Application details
 - **Cluster-Wide Dashboard**: Aggregate security data across all applications from the sidebar
-- **Scan Reports**: Overview, Vulnerabilities, Exposed Secrets, Configuration Audit, RBAC Assessment, SBOM
+- **Scan Reports**: Overview, Vulnerabilities, Exposed Secrets, Configuration Audit, RBAC Assessment, SBOM and Cluster Compliance Reports
 - **Fast Filtering**: Filter by namespace and resource on the cluster-wide view
 - **Zero Bundled Dependencies**: Uses Argo CD's built-in React, keeping the extension lightweight
 - **Deeplinks & Exports**: Easely share your findings by exporting them in or sharing a link.SBOM is exported in CycloneDX standard JSON file, all other findings are exported in CSV format.
@@ -64,7 +64,7 @@ npm run install:dev
 This extention is currently tested with the following ArgoCD versions:
 | ArgoCD Helm chart version | ArgoCD version | Trivy Insights version |
 |---|---|---|
-| argo-cd-10.3.0 | v3.5.0 | :warning: v1.1.0 |
+| argo-cd-10.3.0 | v3.5.0 | :warning: v1.1.1 |
 | argo-cd-10.2.2 | v3.4.6 | v1.0.1 |
 | argo-cd-10.1.3 | v3.4.5 | v1.0.1 |
 | argo-cd-9.5.22 | v3.4.4 | v1.0.1 |

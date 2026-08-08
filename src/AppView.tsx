@@ -3,6 +3,7 @@ import * as React from 'react';
 import './AppView.css';
 import { fetchManifest, invalidateApiCache } from './api';
 import { ChecksReportView } from './ChecksReportView';
+import { ClusterComplianceReportView } from './ClusterComplianceReportView';
 import { ExposedSecretReportView } from './ExposedSecretReportView';
 import { OverviewView } from './OverviewView';
 import {
@@ -73,8 +74,10 @@ export const AppView: React.FC<AppViewProps> = ({ application, tree }) => {
     return kinds;
   }, [tree]);
 
+  // ClusterComplianceReport is cluster-scoped and only meaningful at the
+  // system level - never surface its tab (or its Overview stats) here.
   const isKindVisible = React.useCallback(
-    (kind: ReportKind) => KINDS_FOR_TAB[kind].some((k) => nodeKinds.has(k)),
+    (kind: ReportKind) => kind !== 'ClusterComplianceReport' && KINDS_FOR_TAB[kind].some((k) => nodeKinds.has(k)),
     [nodeKinds]
   );
 
@@ -353,11 +356,15 @@ export const AppView: React.FC<AppViewProps> = ({ application, tree }) => {
             />
           )}
           {activeTab === 'SbomReport' && <SbomReportView reports={streamedData} appName={appName} />}
+          {activeTab === 'ClusterComplianceReport' && (
+            <ClusterComplianceReportView reports={streamedData} urlKey="compliance" />
+          )}
           {activeTab !== 'VulnerabilityReport' &&
             activeTab !== 'ExposedSecretReport' &&
             activeTab !== 'ConfigAuditReport' &&
             activeTab !== 'RbacAssessmentReport' &&
-            activeTab !== 'SbomReport' && (
+            activeTab !== 'SbomReport' &&
+            activeTab !== 'ClusterComplianceReport' && (
               <div className="rd-panel tv-fallback">
                 <h5>Raw {activeTab} data</h5>
                 <p className="rd-muted">
