@@ -3,7 +3,8 @@ export type ReportKind =
   | 'ExposedSecretReport'
   | 'ConfigAuditReport'
   | 'RbacAssessmentReport'
-  | 'SbomReport';
+  | 'SbomReport'
+  | 'ClusterComplianceReport';
 
 export type ReportTab = 'Overview' | ReportKind;
 
@@ -13,6 +14,7 @@ export const REPORT_KINDS: ReportKind[] = [
   'ConfigAuditReport',
   'RbacAssessmentReport',
   'SbomReport',
+  'ClusterComplianceReport',
 ];
 
 export const TABS: ReportTab[] = ['Overview', ...REPORT_KINDS];
@@ -24,6 +26,7 @@ export const TAB_ICON: Record<ReportTab, string> = {
   ConfigAuditReport: 'fa-clipboard-check',
   RbacAssessmentReport: 'fa-user-shield',
   SbomReport: 'fa-cubes',
+  ClusterComplianceReport: 'fa-balance-scale',
 };
 
 // Some report kinds have a cluster-scoped counterpart CRD that shares the
@@ -34,6 +37,7 @@ export const KINDS_FOR_TAB: Record<ReportKind, string[]> = {
   ConfigAuditReport: ['ConfigAuditReport'],
   RbacAssessmentReport: ['RbacAssessmentReport', 'ClusterRbacAssessmentReport'],
   SbomReport: ['SbomReport'],
+  ClusterComplianceReport: ['ClusterComplianceReport'],
 };
 
 export type FetchState =
@@ -53,4 +57,5 @@ export const initialByKind: Record<ReportKind, FetchState> = {
   ConfigAuditReport: { status: 'idle' },
   RbacAssessmentReport: { status: 'idle' },
   SbomReport: { status: 'idle' },
+  ClusterComplianceReport: { status: 'idle' },
 };

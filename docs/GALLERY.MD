@@ -59,3 +59,12 @@ Here you can find images of all available navigation tabs/screen this extention 
 | ![SBOM App Light](screenshots/light-theme/sbom-app-light.png) | ![SBOM App Dark](screenshots/dark-theme/sbom-app-dark.png) |
 | **Cluster-Wide View** | **Cluster-Wide View** |
 | ![SBOM Cluster Light](screenshots/light-theme/sbom-cluster-light.png) | ![SBOM Cluster Dark](screenshots/dark-theme/sbom-cluster-dark.png) |
+
+### Compliance Tab
+
+| Light Theme | Dark Theme |
+|-------------|-----------|
+| **Cluster-Wide View** | **Cluster-Wide View** |
+| ![SBOM App Light](screenshots/light-theme/compliance-cluster-light.png) | ![SBOM App Dark](screenshots/dark-theme/compliance-cluster-dark.png) |
+| **Fly-out View** | **Fly-out View** |
+| ![SBOM Cluster Light](screenshots/light-theme/compliance-flyout-light.png) | ![SBOM Cluster Dark](screenshots/dark-theme/compliance-flyout-dark.png) |

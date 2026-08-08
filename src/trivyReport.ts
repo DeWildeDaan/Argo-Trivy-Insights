@@ -18,7 +18,13 @@ export const SEVERITY_ICON: Record<Severity, string> = {
 };
 
 export const REPORT_KIND_LABEL: Record<
-  'Overview' | 'VulnerabilityReport' | 'ExposedSecretReport' | 'ConfigAuditReport' | 'RbacAssessmentReport' | 'SbomReport',
+  | 'Overview'
+  | 'VulnerabilityReport'
+  | 'ExposedSecretReport'
+  | 'ConfigAuditReport'
+  | 'RbacAssessmentReport'
+  | 'SbomReport'
+  | 'ClusterComplianceReport',
   string
 > = {
   Overview: 'Overview',
@@ -27,6 +33,7 @@ export const REPORT_KIND_LABEL: Record<
   ConfigAuditReport: 'Config Audit',
   RbacAssessmentReport: 'RBAC Assessment',
   SbomReport: 'SBOM',
+  ClusterComplianceReport: 'Compliance',
 };
 
 // Set by the cluster-wide system-level extension on each fetched manifest

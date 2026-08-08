@@ -3,6 +3,7 @@ import * as React from 'react';
 import './AppView.css';
 import { fetchApplications, fetchManifest, fetchResourceTree, invalidateApiCache } from './api';
 import { ChecksReportView } from './ChecksReportView';
+import { ClusterComplianceReportView } from './ClusterComplianceReportView';
 import { ExposedSecretReportView } from './ExposedSecretReportView';
 import { OverviewView } from './OverviewView';
 import {
@@ -427,7 +428,7 @@ export const SystemView: React.FC = () => {
       </div>
       <div id={`tv-tabpanel-${activeTab}`} role="tabpanel" aria-labelledby={`tv-tab-${activeTab}`}>
         {activeTab === 'Overview' && (
-          <OverviewView byKind={byKind} visibleKinds={visibleKinds} scopeLabel="the cluster" />
+          <OverviewView byKind={byKind} visibleKinds={visibleKinds} scopeLabel="the cluster" showScope />
         )}
         {state && state.status === 'loading' && state.data.length === 0 && (
           <div className="tv-loading">
@@ -507,11 +508,15 @@ export const SystemView: React.FC = () => {
               />
             )}
             {activeTab === 'SbomReport' && <SbomReportView reports={streamedData} appName="cluster" showScope urlKey="sys-sbom" />}
+            {activeTab === 'ClusterComplianceReport' && (
+              <ClusterComplianceReportView reports={streamedData} urlKey="sys-compliance" />
+            )}
             {activeTab !== 'VulnerabilityReport' &&
               activeTab !== 'ExposedSecretReport' &&
               activeTab !== 'ConfigAuditReport' &&
               activeTab !== 'RbacAssessmentReport' &&
-              activeTab !== 'SbomReport' && (
+              activeTab !== 'SbomReport' &&
+              activeTab !== 'ClusterComplianceReport' && (
                 <div className="rd-panel tv-fallback">
                   <h5>Raw {activeTab} data</h5>
                   <p className="rd-muted">

@@ -1,11 +1,13 @@
 import * as React from 'react';
 
 import './OverviewView.css';
+import './ClusterComplianceReportView.css';
 import { REPORT_KINDS } from './reportKinds';
 import type { FetchState, ReportKind } from './reportKinds';
 import { flattenChecksReports } from './checksReport';
+import { flattenClusterComplianceReports } from './clusterComplianceReport';
 import { flattenExposedSecretReports } from './exposedSecretReport';
-import { ReportCleanState } from './ReportDashboard';
+import { ReportCleanState, SeverityLegend } from './ReportDashboard';
 import { flattenSbomReports } from './sbomReport';
 import { REPORT_KIND_LABEL, Severity, SEVERITIES, SEVERITY_ICON } from './trivyReport';
 import { flattenVulnerabilityReports } from './vulnerabilityReport';
@@ -48,6 +50,7 @@ interface OverviewViewProps {
   byKind: Record<ReportKind, FetchState>;
   visibleKinds: Record<ReportKind, boolean>;
   scopeLabel?: string;
+  showScope?: boolean;
 }
 
 // Treats a kind still streaming in the same as fully loaded so overview
@@ -59,7 +62,7 @@ function dataFor(state: FetchState): unknown[] {
 
 const SeverityBar: React.FC<{ counts: Record<Severity, number> }> = ({ counts }) => (
   <div className="rd-distribution-bar">
-    {SEVERITIES.map((severity) =>
+    {[...SEVERITIES].sort((a, b) => counts[b] - counts[a]).map((severity) =>
       counts[severity] > 0 ? (
         <div
           key={severity}
@@ -86,13 +89,13 @@ const PositiveNote: React.FC<{ message: string }> = ({ message }) => (
   </p>
 );
 
-interface DonutSegment {
+export interface DonutSegment {
   key: string;
   count: number;
   color: string;
 }
 
-const DonutChart: React.FC<{
+export const DonutChart: React.FC<{
   segments: DonutSegment[];
   size?: number;
   thickness?: number;
@@ -218,7 +221,12 @@ const ResourceLeaderboard: React.FC<{ rows: ResourceRisk[] }> = ({ rows }) => {
   );
 };
 
-export const OverviewView: React.FC<OverviewViewProps> = ({ byKind, visibleKinds, scopeLabel = 'this application' }) => {
+export const OverviewView: React.FC<OverviewViewProps> = ({
+  byKind,
+  visibleKinds,
+  scopeLabel = 'this application',
+  showScope = false,
+}) => {
   const rows = React.useMemo(
     () => ({
       vuln: flattenVulnerabilityReports(dataFor(byKind.VulnerabilityReport)),
@@ -226,6 +234,7 @@ export const OverviewView: React.FC<OverviewViewProps> = ({ byKind, visibleKinds
       config: flattenChecksReports(dataFor(byKind.ConfigAuditReport)),
       rbac: flattenChecksReports(dataFor(byKind.RbacAssessmentReport)),
       sbom: flattenSbomReports(dataFor(byKind.SbomReport)),
+      compliance: flattenClusterComplianceReports(dataFor(byKind.ClusterComplianceReport)),
     }),
     [byKind]
   );
@@ -257,6 +266,22 @@ export const OverviewView: React.FC<OverviewViewProps> = ({ byKind, visibleKinds
   );
 
   const totalFindings = rows.vuln.length + rows.secret.length + rows.config.length + rows.rbac.length;
+
+  const allFindingRows = React.useMemo(
+    () => [...rows.vuln, ...rows.secret, ...rows.config, ...rows.rbac],
+    [rows]
+  );
+  const uniqueResourceCount = React.useMemo(
+    () => new Set(allFindingRows.map((row) => row.resource)).size,
+    [allFindingRows]
+  );
+  const uniqueApplicationCount = React.useMemo(
+    () => new Set(allFindingRows.map((row) => row.application).filter((v): v is string => !!v)).size,
+    [allFindingRows]
+  );
+  const totalSubtitle = showScope
+    ? `across ${uniqueApplicationCount} application${uniqueApplicationCount === 1 ? '' : 's'}`
+    : `across ${uniqueResourceCount} resource${uniqueResourceCount === 1 ? '' : 's'}`;
 
   const topPackages = React.useMemo(
     () => computeRanked(rows.vuln, (row) => row.packageName, { limit: RANKED_LIST_LIMIT }),
@@ -298,7 +323,23 @@ export const OverviewView: React.FC<OverviewViewProps> = ({ byKind, visibleKinds
     [rows.sbom]
   );
 
-  const totalRows = rows.vuln.length + rows.secret.length + rows.config.length + rows.rbac.length + rows.sbom.length;
+  const complianceStats = React.useMemo(() => {
+    let pass = 0;
+    let fail = 0;
+    let manual = 0;
+    for (const instance of rows.compliance) {
+      for (const control of instance.controls) {
+        if (control.status === 'pass') pass += 1;
+        else if (control.status === 'fail') fail += 1;
+        else manual += 1;
+      }
+    }
+    const passRate = pass + fail > 0 ? Math.round((pass / (pass + fail)) * 100) : 0;
+    return { frameworks: rows.compliance.length, pass, fail, manual, passRate };
+  }, [rows.compliance]);
+
+  const totalRows =
+    rows.vuln.length + rows.secret.length + rows.config.length + rows.rbac.length + rows.sbom.length + rows.compliance.length;
 
   if (isLoading) {
     return (
@@ -331,6 +372,7 @@ export const OverviewView: React.FC<OverviewViewProps> = ({ byKind, visibleKinds
               </span>
               <div>
                 <div className="rd-card-label">Total</div>
+                <div className="rd-card-subtitle">{totalSubtitle}</div>
                 <div className="rd-card-count">{totalFindings}</div>
               </div>
             </div>
@@ -353,7 +395,10 @@ export const OverviewView: React.FC<OverviewViewProps> = ({ byKind, visibleKinds
         <div className="rd-panel">
           <h5>Top Resources by Risk</h5>
           {leaderboard.length > 0 ? (
-            <ResourceLeaderboard rows={leaderboard} />
+            <>
+              <SeverityLegend />
+              <ResourceLeaderboard rows={leaderboard} />
+            </>
           ) : (
             <PositiveNote message="No resources with findings - nothing to rank." />
           )}
@@ -363,14 +408,7 @@ export const OverviewView: React.FC<OverviewViewProps> = ({ byKind, visibleKinds
       {anyFindingKindVisible && (
         <div className="rd-panel">
           <h5>Findings by Report Type</h5>
-          <div className="ov-legend ov-legend--row">
-            {SEVERITIES.map((severity) => (
-              <div key={severity} className="ov-legend-item">
-                <span className="ov-legend-swatch" style={{ background: SEVERITY_COLOR[severity] }} />
-                <span>{severity}</span>
-              </div>
-            ))}
-          </div>
+          <SeverityLegend />
           <div className="ov-kind-grid">
             {FINDING_KINDS.filter((kind) => visibleKinds[kind]).map((kind) => {
               const kindRows = findingRowsByKind[kind] ?? [];
@@ -392,6 +430,59 @@ export const OverviewView: React.FC<OverviewViewProps> = ({ byKind, visibleKinds
                 </div>
               );
             })}
+          </div>
+        </div>
+      )}
+
+      {visibleKinds.ClusterComplianceReport && rows.compliance.length > 0 && (
+        <div className="rd-panel">
+          <h5>Compliance</h5>
+          <div className="rd-cards ccr-stat-cards">
+            <div className="rd-card">
+              <span className="rd-card-icon ccr-card-icon--pass">
+                <i className="fas fa-percentage" />
+              </span>
+              <div>
+                <div className="rd-card-label">Pass Rate</div>
+                <div className="rd-card-count">{complianceStats.passRate}%</div>
+              </div>
+            </div>
+            <div className="rd-card">
+              <span className="rd-card-icon rd-card-icon--total">
+                <i className="fas fa-balance-scale" />
+              </span>
+              <div>
+                <div className="rd-card-label">Frameworks</div>
+                <div className="rd-card-count">{complianceStats.frameworks}</div>
+              </div>
+            </div>
+            <div className="rd-card">
+              <span className="rd-card-icon ccr-card-icon--pass">
+                <i className="fas fa-check-circle" />
+              </span>
+              <div>
+                <div className="rd-card-label">Passed</div>
+                <div className="rd-card-count">{complianceStats.pass}</div>
+              </div>
+            </div>
+            <div className="rd-card">
+              <span className="rd-card-icon ccr-card-icon--fail">
+                <i className="fas fa-times-circle" />
+              </span>
+              <div>
+                <div className="rd-card-label">Failed</div>
+                <div className="rd-card-count">{complianceStats.fail}</div>
+              </div>
+            </div>
+            <div className="rd-card">
+              <span className="rd-card-icon ccr-card-icon--manual">
+                <i className="fas fa-hand-paper" />
+              </span>
+              <div>
+                <div className="rd-card-label">Manual</div>
+                <div className="rd-card-count">{complianceStats.manual}</div>
+              </div>
+            </div>
           </div>
         </div>
       )}

@@ -1,0 +1,42 @@
+.ccr-card-icon--pass { background: rgba(24, 190, 148, 0.12); color: #18be94; }
+.ccr-card-icon--fail { background: rgba(224, 49, 31, 0.12); color: #e0311f; }
+.ccr-card-icon--manual { background: rgba(154, 167, 174, 0.12); color: #9aa7ae; }
+
+.rd-distribution-segment--pass { background: #18be94; }
+.rd-distribution-segment--fail { background: #e0311f; }
+.rd-distribution-segment--manual { background: #9aa7ae; }
+
+.ccr-stat-cards {
+  margin-bottom: 0;
+}
+
+.ccr-status-badge {
+  display: inline-block;
+  border-radius: 10px;
+  padding: 0.3em 0.85em;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.ccr-status-badge--pass { background: #18be94; }
+.ccr-status-badge--fail { background: #e0311f; }
+.ccr-status-badge--manual { background: #9aa7ae; }
+
+.ccr-status-badge i {
+  margin-right: 0.4em;
+}
+
+.ccr-status-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  font-size: 14px;
+}
+
+.ccr-status-icon--pass { background: rgba(24, 190, 148, 0.12); color: #18be94; }
+.ccr-status-icon--fail { background: rgba(224, 49, 31, 0.12); color: #e0311f; }
+.ccr-status-icon--manual { background: rgba(154, 167, 174, 0.12); color: #9aa7ae; }
