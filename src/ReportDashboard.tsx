@@ -24,6 +24,17 @@ export const ReportCleanState: React.FC<{ message: string }> = ({ message }) => 
   </div>
 );
 
+export const SeverityLegend: React.FC = () => (
+  <div className="rd-legend rd-legend--row">
+    {SEVERITIES.map((severity) => (
+      <div key={severity} className="rd-legend-item">
+        <span className={`rd-legend-swatch rd-legend-swatch--${severity.toLowerCase()}`} />
+        <span>{severity}</span>
+      </div>
+    ))}
+  </div>
+);
+
 export interface ReportDashboardColumn<T> {
   key: string;
   label: string;
@@ -258,7 +269,20 @@ export function ReportDashboard<T extends ReportDashboardRow>({
     );
   };
 
-  const scopedTotal = searchedRows.length || 1;
+  const totalCount = searchedRows.length;
+  const scopedTotal = totalCount || 1;
+
+  const uniqueResourceCount = React.useMemo(
+    () => new Set(searchedRows.map((row) => row.resource)).size,
+    [searchedRows]
+  );
+  const uniqueApplicationCount = React.useMemo(
+    () => new Set(searchedRows.map((row) => row.application).filter((v): v is string => !!v)).size,
+    [searchedRows]
+  );
+  const totalSubtitle = showNamespaceFilter
+    ? `across ${uniqueApplicationCount} application${uniqueApplicationCount === 1 ? '' : 's'}`
+    : `across ${uniqueResourceCount} resource${uniqueResourceCount === 1 ? '' : 's'}`;
 
   const sortedSeverities = React.useMemo(
     () => [...SEVERITIES].sort((a, b) => counts[b] - counts[a]),
@@ -288,6 +312,16 @@ export function ReportDashboard<T extends ReportDashboardRow>({
   return (
     <div className="rd-dashboard">
       <div className="rd-cards">
+        <div className="rd-card rd-card--total">
+          <span className="rd-card-icon rd-card-icon--total">
+            <i className="fas fa-layer-group" />
+          </span>
+          <div>
+            <div className="rd-card-label">Total</div>
+            <div className="rd-card-subtitle">{totalSubtitle}</div>
+            <div className="rd-card-count">{totalCount}</div>
+          </div>
+        </div>
         {SEVERITIES.map((severity) => (
           <div key={severity} className={`rd-card rd-card--${severity.toLowerCase()}`}>
             <span className={`rd-card-icon rd-card-icon--${severity.toLowerCase()}`}>
@@ -303,6 +337,7 @@ export function ReportDashboard<T extends ReportDashboardRow>({
 
       <div className="rd-panel">
         <h5>{distributionLabel}</h5>
+        <SeverityLegend />
         <div className="rd-distribution-bar">
           {sortedSeverities.map((severity) =>
             counts[severity] > 0 ? (

@@ -5,7 +5,7 @@ import { REPORT_KINDS } from './reportKinds';
 import type { FetchState, ReportKind } from './reportKinds';
 import { flattenChecksReports } from './checksReport';
 import { flattenExposedSecretReports } from './exposedSecretReport';
-import { ReportCleanState } from './ReportDashboard';
+import { ReportCleanState, SeverityLegend } from './ReportDashboard';
 import { flattenSbomReports } from './sbomReport';
 import { REPORT_KIND_LABEL, Severity, SEVERITIES, SEVERITY_ICON } from './trivyReport';
 import { flattenVulnerabilityReports } from './vulnerabilityReport';
@@ -48,6 +48,7 @@ interface OverviewViewProps {
   byKind: Record<ReportKind, FetchState>;
   visibleKinds: Record<ReportKind, boolean>;
   scopeLabel?: string;
+  showScope?: boolean;
 }
 
 // Treats a kind still streaming in the same as fully loaded so overview
@@ -59,7 +60,7 @@ function dataFor(state: FetchState): unknown[] {
 
 const SeverityBar: React.FC<{ counts: Record<Severity, number> }> = ({ counts }) => (
   <div className="rd-distribution-bar">
-    {SEVERITIES.map((severity) =>
+    {[...SEVERITIES].sort((a, b) => counts[b] - counts[a]).map((severity) =>
       counts[severity] > 0 ? (
         <div
           key={severity}
@@ -218,7 +219,12 @@ const ResourceLeaderboard: React.FC<{ rows: ResourceRisk[] }> = ({ rows }) => {
   );
 };
 
-export const OverviewView: React.FC<OverviewViewProps> = ({ byKind, visibleKinds, scopeLabel = 'this application' }) => {
+export const OverviewView: React.FC<OverviewViewProps> = ({
+  byKind,
+  visibleKinds,
+  scopeLabel = 'this application',
+  showScope = false,
+}) => {
   const rows = React.useMemo(
     () => ({
       vuln: flattenVulnerabilityReports(dataFor(byKind.VulnerabilityReport)),
@@ -257,6 +263,22 @@ export const OverviewView: React.FC<OverviewViewProps> = ({ byKind, visibleKinds
   );
 
   const totalFindings = rows.vuln.length + rows.secret.length + rows.config.length + rows.rbac.length;
+
+  const allFindingRows = React.useMemo(
+    () => [...rows.vuln, ...rows.secret, ...rows.config, ...rows.rbac],
+    [rows]
+  );
+  const uniqueResourceCount = React.useMemo(
+    () => new Set(allFindingRows.map((row) => row.resource)).size,
+    [allFindingRows]
+  );
+  const uniqueApplicationCount = React.useMemo(
+    () => new Set(allFindingRows.map((row) => row.application).filter((v): v is string => !!v)).size,
+    [allFindingRows]
+  );
+  const totalSubtitle = showScope
+    ? `across ${uniqueApplicationCount} application${uniqueApplicationCount === 1 ? '' : 's'}`
+    : `across ${uniqueResourceCount} resource${uniqueResourceCount === 1 ? '' : 's'}`;
 
   const topPackages = React.useMemo(
     () => computeRanked(rows.vuln, (row) => row.packageName, { limit: RANKED_LIST_LIMIT }),
@@ -331,6 +353,7 @@ export const OverviewView: React.FC<OverviewViewProps> = ({ byKind, visibleKinds
               </span>
               <div>
                 <div className="rd-card-label">Total</div>
+                <div className="rd-card-subtitle">{totalSubtitle}</div>
                 <div className="rd-card-count">{totalFindings}</div>
               </div>
             </div>
@@ -353,7 +376,10 @@ export const OverviewView: React.FC<OverviewViewProps> = ({ byKind, visibleKinds
         <div className="rd-panel">
           <h5>Top Resources by Risk</h5>
           {leaderboard.length > 0 ? (
-            <ResourceLeaderboard rows={leaderboard} />
+            <>
+              <SeverityLegend />
+              <ResourceLeaderboard rows={leaderboard} />
+            </>
           ) : (
             <PositiveNote message="No resources with findings - nothing to rank." />
           )}
@@ -363,14 +389,7 @@ export const OverviewView: React.FC<OverviewViewProps> = ({ byKind, visibleKinds
       {anyFindingKindVisible && (
         <div className="rd-panel">
           <h5>Findings by Report Type</h5>
-          <div className="ov-legend ov-legend--row">
-            {SEVERITIES.map((severity) => (
-              <div key={severity} className="ov-legend-item">
-                <span className="ov-legend-swatch" style={{ background: SEVERITY_COLOR[severity] }} />
-                <span>{severity}</span>
-              </div>
-            ))}
-          </div>
+          <SeverityLegend />
           <div className="ov-kind-grid">
             {FINDING_KINDS.filter((kind) => visibleKinds[kind]).map((kind) => {
               const kindRows = findingRowsByKind[kind] ?? [];

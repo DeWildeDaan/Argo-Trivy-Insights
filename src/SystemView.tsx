@@ -427,7 +427,7 @@ export const SystemView: React.FC = () => {
       </div>
       <div id={`tv-tabpanel-${activeTab}`} role="tabpanel" aria-labelledby={`tv-tab-${activeTab}`}>
         {activeTab === 'Overview' && (
-          <OverviewView byKind={byKind} visibleKinds={visibleKinds} scopeLabel="the cluster" />
+          <OverviewView byKind={byKind} visibleKinds={visibleKinds} scopeLabel="the cluster" showScope />
         )}
         {state && state.status === 'loading' && state.data.length === 0 && (
           <div className="tv-loading">
