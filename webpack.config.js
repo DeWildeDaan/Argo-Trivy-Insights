@@ -20,8 +20,8 @@ module.exports = {
         test: /\.tsx?$/,
         exclude: /node_modules/,
         use: {
-          loader: 'ts-loader',
-          options: { transpileOnly: true, configFile: 'tsconfig.json' },
+          loader: 'esbuild-loader',
+          options: { loader: 'tsx', target: 'es2020' },
         },
       },
       {
