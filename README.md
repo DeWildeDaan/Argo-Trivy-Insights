@@ -64,6 +64,7 @@ npm run install:dev
 This extention is currently tested with the following ArgoCD versions:
 | ArgoCD Helm chart version | ArgoCD version | Trivy Insights version |
 |---|---|---|
+| argo-cd-10.11.6 | v3.5.6 | v1.3.3 |
 | argo-cd-10.3.0 | v3.5.0 | :warning: v1.1.1 |
 | argo-cd-10.2.2 | v3.4.6 | v1.0.1 |
 | argo-cd-10.1.3 | v3.4.5 | v1.0.1 |
