@@ -1,0 +1,13 @@
+{
+  "branches": ["main"],
+  "plugins": [
+    "@semantic-release/commit-analyzer",
+    "@semantic-release/release-notes-generator",
+    ["@semantic-release/exec", {
+      "prepareCmd": "npm version ${nextRelease.version} --no-git-tag-version && npm run package && cd dist && sha256sum extension-trivy-insights.tar.gz > extension-trivy-insights_checksums.txt"
+    }],
+    ["@semantic-release/github", {
+      "assets": ["dist/extension-trivy-insights.tar.gz", "dist/extension-trivy-insights_checksums.txt"]
+    }]
+  ]
+}

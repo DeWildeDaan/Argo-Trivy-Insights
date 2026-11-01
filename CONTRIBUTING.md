@@ -35,7 +35,7 @@ Found a bug or have a feature idea? [Open an issue](https://github.com/DeWildeDa
 
 5. **Commit and push**
    ```bash
-   git commit -m "Brief description of change"
+   git commit -m "feat: brief description of change"
    git push origin feature/my-feature
    ```
 
@@ -43,6 +43,12 @@ Found a bug or have a feature idea? [Open an issue](https://github.com/DeWildeDa
    - Describe what changed and why
    - Link any related issues
    - If you where not able to test and render your changes locally on a workign ArgoCD instance, please mention so in the PR.
+
+## Commits and Releases
+
+Commits (the PR title when squash-merging) must follow [Conventional Commits](https://www.conventionalcommits.org/).
+Every merge to `main` is released automatically: `fix:` → patch, `feat:` → minor, `feat!:` / `BREAKING CHANGE:` → major.
+`docs:`, `chore:`, `build:` etc. do not trigger a release.
 
 ## Code Style
 
