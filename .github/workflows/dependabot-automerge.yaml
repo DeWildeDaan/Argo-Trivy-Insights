@@ -1,0 +1,32 @@
+name: dependabot-automerge
+on:
+  pull_request:
+    branches:
+      - 'main'
+permissions:
+  contents: write
+  pull-requests: write
+jobs:
+  automerge:
+    if: github.actor == 'dependabot[bot]' && contains(github.head_ref, 'patch-and-minor')
+    runs-on: ubuntu-latest
+    steps:
+      - id: meta
+        uses: dependabot/fetch-metadata@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Retitle by highest bump, then enable auto-merge
+        env:
+          # A PAT is required: merges made with GITHUB_TOKEN don't trigger the release workflow.
+          GH_TOKEN: ${{ secrets.AUTOMERGE_TOKEN }}
+          PR: ${{ github.event.pull_request.html_url }}
+          DEPS: ${{ steps.meta.outputs.updated-dependencies-json }}
+        run: |
+          set -euo pipefail
+          # minor bump -> feat (minor release), otherwise fix (patch release)
+          type=fix
+          echo "$DEPS" | jq -e 'any(.[]; .updateType == "version-update:semver-minor")' >/dev/null && type=feat
+          count=$(echo "$DEPS" | jq length)
+          title="$type(deps): bump $count dependencies (patch and minor)"
+          gh pr edit "$PR" --title "$title"
+          gh pr merge "$PR" --auto --squash --subject "$title"

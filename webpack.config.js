@@ -1,4 +1,6 @@
 const path = require('path');
+const webpack = require('webpack');
+const { version } = require('./package.json');
 
 const extensionName = 'trivy-insights';
 
@@ -30,6 +32,7 @@ module.exports = {
       },
     ],
   },
+  plugins: [new webpack.BannerPlugin(`argo-trivy-insights v${version}`)],
   // React must NOT be bundled - Argo CD provides it as a global.
   externals: {
     react: 'React',

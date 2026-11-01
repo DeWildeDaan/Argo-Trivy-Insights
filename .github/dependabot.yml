@@ -4,14 +4,14 @@ updates:
     directory: "/"
     schedule:
       interval: weekly
+    commit-message:
+      prefix: "fix"
+      include: "scope"
     groups:
+      # All patch+minor updates in one PR; majors are ungrouped = one PR each.
       patch-and-minor:
-        dependency-type: production
         update-types:
           - "minor"
           - "patch"
-      major-updates:
-        update-types:
-          - "major"
     reviewers:
       - DeWildeDaan
